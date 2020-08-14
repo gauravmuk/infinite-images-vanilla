@@ -1,41 +1,34 @@
 import { MAX_IMAGES_IN_A_ROW } from "./constants.js";
 import { ImageManager } from "./ImageManager.js";
+export class App {
+  constructor() {
+    document.addEventListener("DOMContentLoaded", this.init.bind(this));
+  }
 
-let imageManager;
-let documentWidth;
-let $pixel;
-let $content;
+  async init() {
+    const documentWidth = document.documentElement.scrollWidth;
+    this.$content = document.querySelector("#content");
+    this.$pixel = document.querySelector("#pixel");
+    this.imageManager = new ImageManager({
+      ref: this.$content,
+      documentWidth: documentWidth,
+    });
+    // Preload Images
+    await this.imageManager.loadImages(MAX_IMAGES_IN_A_ROW * 3);
+    this.loadImagesOnScroll();
+  }
 
-async function bindScroll() {
-  const intersectionObserver = new IntersectionObserver(async (entries) => {
-    if (entries.some((entry) => entry.intersectionRatio > 0)) {
-      await imageManager.loadImages(MAX_IMAGES_IN_A_ROW * 3);
-      // Move the pixel after the images on every load to trigger intersection again
-      $content.appendChild($pixel);
-      await imageManager.loadImages(MAX_IMAGES_IN_A_ROW * 2);
-    }
-  });
-  intersectionObserver.observe($pixel);
+  async loadImagesOnScroll() {
+    const intersectionObserver = new IntersectionObserver(async (entries) => {
+      if (entries.some((entry) => entry.intersectionRatio > 0)) {
+        await this.imageManager.loadImages(MAX_IMAGES_IN_A_ROW * 3);
+        // Move the pixel after the images on every load to trigger intersection again
+        this.$content.appendChild(this.$pixel);
+        await this.imageManager.loadImages(MAX_IMAGES_IN_A_ROW * 2);
+      }
+    });
+    intersectionObserver.observe(this.$pixel);
+  }
 }
 
-function initializeConstants() {
-  documentWidth = document.documentElement.scrollWidth;
-  $content = document.querySelector("#content");
-  $pixel = document.querySelector("#pixel");
-  imageManager = new ImageManager({
-    ref: $content,
-    documentWidth: documentWidth
-  });
-}
-
-async function init() {
-  // Initialize Constants which are to be reused
-  initializeConstants();
-  // Preload Images
-  await imageManager.loadImages(MAX_IMAGES_IN_A_ROW * 3);
-  bindScroll();
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  init();
-});
+new App();
