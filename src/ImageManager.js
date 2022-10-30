@@ -3,6 +3,7 @@ import { FunctionUtils } from "./utils.js";
 
 export class ImageManager {
   constructor(params) {
+    // Object to cache images
     this.imagesFetched = {};
     this.ref = params.ref;
     this.documentWidth = params.documentWidth;
