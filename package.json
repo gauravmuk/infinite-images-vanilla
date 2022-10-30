@@ -11,7 +11,8 @@
     "url": "git+https://github.com/softvar/infinite-images-vanilla.git"
   },
   "keywords": [
-    "infinite"
+    "infinite",
+    "images-loader"
   ],
   "author": "Gaurav Nanda",
   "license": "MIT",
